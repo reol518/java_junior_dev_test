@@ -1,0 +1,11 @@
+{
+  "criterias": [
+    {"lastName": "Иванов"},
+    {"lastName": "Залуцкий"},
+    {"productName": "Пиво", "minTimes": 1},
+    {"minExpenses": 112, "maxExpenses": 1000},
+    {"badCustomers": 4},
+    {"productName": "Мясо", "minTimes": 2},
+    {"productName": "Рыба", "minTimes": 3}
+  ]
+}
