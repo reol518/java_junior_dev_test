@@ -1,6 +1,6 @@
 package ru.nsu.criterias;
 
-public class LastNameCriteria extends Criteria {
+public class LastNameCriteria implements Criteria {
     public LastNameCriteria(String lastName) {
         this.lastName = lastName;
     }

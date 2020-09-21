@@ -1,7 +1,7 @@
 package ru.nsu.criterias;
 
-public class IntervalTotalSumCriteria extends Criteria {
-    public IntervalTotalSumCriteria(int minExpenses, int maxExpenses) {
+public class CostIntervalCriteria implements Criteria {
+    public CostIntervalCriteria(int minExpenses, int maxExpenses) {
         this.minExpenses = minExpenses;
         this.maxExpenses = maxExpenses;
     }

@@ -1,20 +1,20 @@
 package ru.nsu.statistics;
 
 public class Purchase {
-    public Purchase(String name, int expenses) {
-        this.name = name;
+    public Purchase(String productName, int expenses) {
+        this.productName = productName;
         this.expenses = expenses;
     }
 
-    private String name;
+    private String productName;
     private int expenses;
 
-    public String getName() {
-        return name;
+    public String getProductName() {
+        return productName;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setProductName(String productName) {
+        this.productName = productName;
     }
 
     public int getExpenses() {

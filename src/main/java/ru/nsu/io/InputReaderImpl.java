@@ -8,7 +8,7 @@ import java.io.FileReader;
 import java.io.IOException;
 
 public class InputReaderImpl implements InputReader {
-    private Gson gson;
+    private final Gson gson;
 
     public InputReaderImpl(Gson gson) {
         this.gson = gson;
@@ -35,8 +35,6 @@ public class InputReaderImpl implements InputReader {
                 stringBuilder.append((char) c);
             }
             fileAsString = stringBuilder.toString();
-        } catch (IOException e) {
-            throw new IOException();
         }
         return fileAsString;
     }

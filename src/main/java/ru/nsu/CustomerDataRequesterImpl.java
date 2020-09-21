@@ -3,7 +3,7 @@ package ru.nsu;
 import ru.nsu.criterias.*;
 import ru.nsu.database.DataBaseConnection;
 import ru.nsu.search.Customer;
-import ru.nsu.search.ResultsForSearch;
+import ru.nsu.search.ResultsByCriteria;
 import ru.nsu.search.SearchResult;
 import ru.nsu.statistics.CustomerStat;
 import ru.nsu.statistics.Purchase;
@@ -31,7 +31,7 @@ public class CustomerDataRequesterImpl implements CustomerDataRequester {
 
         ResultSet resultSet = statement.executeQuery(querySQL);
 
-        List<CustomerStat> customers = new ArrayList<CustomerStat>();
+        List<CustomerStat> customers = new ArrayList<>();
 
         int index = 1;
         int totalSum = 0;
@@ -62,7 +62,7 @@ public class CustomerDataRequesterImpl implements CustomerDataRequester {
 
                 totalSum += totalExpenses;
                 index++;
-                purchases = new ArrayList<Purchase>();
+                purchases = new ArrayList<>();
                 customerStat = new CustomerStat(name, purchases, totalExpenses);
                 customers.add(customerStat);
 
@@ -103,27 +103,27 @@ public class CustomerDataRequesterImpl implements CustomerDataRequester {
         String querySQL = null;
         Statement statement = connection.createStatement();
         SearchResult searchResult = new SearchResult();
-        List<ResultsForSearch> resultsForSearchesList = new ArrayList<ResultsForSearch>();
+        List<ResultsByCriteria> resultsForSearchesList = new ArrayList<>();
 
         for (Criteria criteria : criteriaList) {
 
             if (criteria instanceof LastNameCriteria) {
                 querySQL = getSQLQueryForLastNameCriteria((LastNameCriteria) criteria);
-            } else if (criteria instanceof ProductBuyingCriteria) {
-                querySQL = getSQLQueryForProductBuyingMinTimes((ProductBuyingCriteria) criteria);
-            } else if (criteria instanceof IntervalTotalSumCriteria) {
-                querySQL = getSQLIntervalTotalSumCriteria((IntervalTotalSumCriteria) criteria);
+            } else if (criteria instanceof ProductMinTimesBuyingCriteria) {
+                querySQL = getSQLQueryForProductMinTimesBuyingCriteria((ProductMinTimesBuyingCriteria) criteria);
+            } else if (criteria instanceof CostIntervalCriteria) {
+                querySQL = getSQLCostIntervalCriteria((CostIntervalCriteria) criteria);
             } else if (criteria instanceof BadCustomersCriteria) {
                 querySQL = getSQLBadCustomersCriteria((BadCustomersCriteria) criteria);
             }
             ResultSet resultSet = statement.executeQuery(querySQL);
-            List<Customer> customersList = new ArrayList<Customer>();
+            List<Customer> customersList = new ArrayList<>();
             while (resultSet.next()) {
                 String customerLastName = resultSet.getString("last_name");
                 String customerFirstName = resultSet.getString("first_name");
                 customersList.add(new Customer(customerLastName, customerFirstName));
             }
-            resultsForSearchesList.add(new ResultsForSearch(criteria, customersList));
+            resultsForSearchesList.add(new ResultsByCriteria(criteria, customersList));
         }
         searchResult.setResults(resultsForSearchesList);
 
@@ -136,24 +136,24 @@ public class CustomerDataRequesterImpl implements CustomerDataRequester {
                 + lastNameCriteria.getLastName() + "'";
     }
 
-    private String getSQLQueryForProductBuyingMinTimes(ProductBuyingCriteria productBuyingCriteria) {
+    private String getSQLQueryForProductMinTimesBuyingCriteria(ProductMinTimesBuyingCriteria productMinTimesBuyingCriteria) {
         return "Select customers.last_name, customers.first_name, products.product, COUNT(products.id) as totalBuying " +
                 "from orders " +
                 "join customers ON customers.id = orders.customer_id " +
                 "join products ON products.id = orders.product_id AND products.product = '"
-                + productBuyingCriteria.getProductName() + "' " +
+                + productMinTimesBuyingCriteria.getProductName() + "' " +
                 "GROUP BY customers.last_name, customers.first_name, products.id " +
-                "having COUNT(products.id) >= " + productBuyingCriteria.getMinTimesBuy();
+                "having COUNT(products.id) >= " + productMinTimesBuyingCriteria.getMinTimesPurchases();
     }
 
-    private String getSQLIntervalTotalSumCriteria(IntervalTotalSumCriteria intervalTotalSumCriteria) {
+    private String getSQLCostIntervalCriteria(CostIntervalCriteria costIntervalCriteria) {
         return "Select customers.last_name, customers.first_name, SUM(products.price) " +
                 "from orders " +
                 "join customers ON customers.id = orders.customer_id " +
                 "join products ON products.id = orders.product_id " +
                 "GROUP BY customers.last_name, customers.first_name " +
-                "having SUM(products.price) between " + intervalTotalSumCriteria.getMinExpenses() +
-                " and " + intervalTotalSumCriteria.getMaxExpenses();
+                "having SUM(products.price) between " + costIntervalCriteria.getMinExpenses() +
+                " and " + costIntervalCriteria.getMaxExpenses();
     }
 
     private String getSQLBadCustomersCriteria(BadCustomersCriteria badCustomersCriteria) {

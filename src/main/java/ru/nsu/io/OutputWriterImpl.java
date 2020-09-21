@@ -19,31 +19,33 @@ public class OutputWriterImpl implements OutputWriter {
     }
 
     @Override
-    public void saveSearchResult(String outputFile, SearchResult searchResult)  {
+    public void saveSearchResult(String outputFile, SearchResult searchResult) throws IOException {
         String json = gson.toJson(searchResult);
         writeInFile(outputFile, json);
         System.out.println(json);
     }
 
     @Override
-    public void saveStatistics(String outputFile, Statistics statistics) {
+    public void saveStatistics(String outputFile, Statistics statistics) throws IOException {
         String json = gson.toJson(statistics);
         writeInFile(outputFile, json);
         System.out.println(json);
     }
 
     @Override
-    public void outputError(String outputFile, Error error) {
+    public void errorOutput(String outputFile, Error error)  {
         String json = gson.toJson(error);
-        writeInFile(outputFile, json);
+        try {
+            writeInFile(outputFile, json);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         System.out.println(json);
     }
 
-    private void writeInFile(String outputFile, String json) {
+    private void writeInFile(String outputFile, String json) throws IOException {
         try (OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(outputFile), StandardCharsets.UTF_8)) {
             writer.write(json);
-        } catch (IOException ex) {
-            ex.printStackTrace();
         }
     }
 

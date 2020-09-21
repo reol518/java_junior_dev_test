@@ -29,7 +29,6 @@ public class Statistics {
         this.customers = customers;
     }
 
-
     public int getTotalExpenses() {
         return totalExpenses;
     }

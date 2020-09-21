@@ -1,6 +1,6 @@
 package ru.nsu.criterias;
 
-public class BadCustomersCriteria extends Criteria {
+public class BadCustomersCriteria implements Criteria {
     public BadCustomersCriteria(int numOfBadCustomers) {
         this.numOfBadCustomers = numOfBadCustomers;
     }

@@ -1,4 +1,4 @@
 package ru.nsu.criterias;
 
-public abstract class Criteria {
+public interface Criteria {
 }

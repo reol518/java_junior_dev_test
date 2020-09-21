@@ -7,5 +7,6 @@ import java.io.IOException;
 
 public interface InputReader {
     SearchCriterias readSearchCriterias(String input) throws IOException;
+
     StatCriteria readStatCriteria(String input) throws IOException;
 }

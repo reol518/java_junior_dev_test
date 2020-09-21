@@ -14,20 +14,24 @@ public class CriteriasDeserializer implements JsonDeserializer<Criteria> {
         if (lastName != null) {
             return new LastNameCriteria(lastName.getAsString());
         }
+
         JsonElement minExpenses = jsonElement.getAsJsonObject().get("minExpenses");
         if (minExpenses != null) {
             int maxExpenses = jsonElement.getAsJsonObject().get("maxExpenses").getAsInt();
-            return new IntervalTotalSumCriteria(minExpenses.getAsInt(), maxExpenses);
+            return new CostIntervalCriteria(minExpenses.getAsInt(), maxExpenses);
         }
+
         JsonElement productName = jsonElement.getAsJsonObject().get("productName");
         if (productName != null) {
             int minTimes = jsonElement.getAsJsonObject().get("minTimes").getAsInt();
-            return new ProductBuyingCriteria(productName.getAsString(), minTimes);
+            return new ProductMinTimesBuyingCriteria(productName.getAsString(), minTimes);
         }
+
         JsonElement badCustomers = jsonElement.getAsJsonObject().get("badCustomers");
         if (badCustomers != null) {
             return new BadCustomersCriteria(badCustomers.getAsInt());
         }
+
         return null;
     }
 }

@@ -4,8 +4,8 @@ import ru.nsu.criterias.Criteria;
 
 import java.util.List;
 
-public class ResultsForSearch {
-    public ResultsForSearch(Criteria criteria, List<Customer> results) {
+public class ResultsByCriteria {
+    public ResultsByCriteria(Criteria criteria, List<Customer> results) {
         this.criteria = criteria;
         this.results = results;
     }

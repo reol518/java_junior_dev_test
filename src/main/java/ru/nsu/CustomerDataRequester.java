@@ -10,5 +10,6 @@ import java.util.List;
 
 public interface CustomerDataRequester {
     Statistics getStatistics(StatCriteria statCriteria) throws SQLException;
+
     SearchResult getSearchResult(List<Criteria> criteriaList) throws SQLException;
 }

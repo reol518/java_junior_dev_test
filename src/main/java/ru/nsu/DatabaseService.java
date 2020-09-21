@@ -24,11 +24,10 @@ public class DatabaseService {
 
 
     public void start(String type, String inputFile, String outputFile) {
-        // обработать аргументы ^
         if (outputFile == null) {
-            outputWriter.outputError("OutputError.json", new Error("Null аргумент"));
+            outputWriter.errorOutput("OutputError.json", new Error("Null аргумент"));
         } else if (type == null || inputFile == null) {
-            outputWriter.outputError(outputFile, new Error("Null аргумент"));
+            outputWriter.errorOutput(outputFile, new Error("Null аргумент"));
         } else {
             try {
                 if (type.equals("search")) {
@@ -40,15 +39,15 @@ public class DatabaseService {
                     Statistics statistics = customerDataRequester.getStatistics(statCriteria);
                     outputWriter.saveStatistics(outputFile, statistics);
                 } else {
-                    outputWriter.outputError(outputFile, new Error("Некорректный аргумент"));
+                    outputWriter.errorOutput(outputFile, new Error("Некорректный аргумент"));
                 }
 
             } catch (SQLException e) {
-                outputWriter.outputError(outputFile, new Error("Ошибка при работе с базой данных"));
+                outputWriter.errorOutput(outputFile, new Error("Ошибка при работе с базой данных"));
             } catch (IOException e) {
-                outputWriter.outputError(outputFile, new Error("Ошибка при работе с файлами"));
+                outputWriter.errorOutput(outputFile, new Error("Ошибка при работе с файлами"));
             } catch (Exception e) {
-                outputWriter.outputError(outputFile, new Error("Произошла ошибка в работе программы"));
+                outputWriter.errorOutput(outputFile, new Error("Произошла ошибка в работе программы"));
             }
         }
     }
