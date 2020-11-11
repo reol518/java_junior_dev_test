@@ -1,4 +1,4 @@
-package ru.nsu.search;
+package ru.nsu.result.search;
 
 import ru.nsu.criterias.Criteria;
 

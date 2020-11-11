@@ -1,6 +1,6 @@
 package ru.nsu.criterias;
 
-public class StatCriteria {
+public class StatCriteria implements InputCriterias {
     public StatCriteria(String startDate, String endDate) {
         this.startDate = startDate;
         this.endDate = endDate;

@@ -1,12 +1,10 @@
 package ru.nsu;
 
-import ru.nsu.criterias.SearchCriterias;
-import ru.nsu.criterias.StatCriteria;
+import ru.nsu.criterias.InputCriterias;
 import ru.nsu.error.Error;
 import ru.nsu.io.InputReader;
 import ru.nsu.io.OutputWriter;
-import ru.nsu.search.SearchResult;
-import ru.nsu.statistics.Statistics;
+import ru.nsu.result.Result;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -30,18 +28,13 @@ public class DatabaseService {
             outputWriter.errorOutput(outputFile, new Error("Null аргумент"));
         } else {
             try {
-                if (type.equals("search")) {
-                    SearchCriterias searchCriterias = inputReader.readSearchCriterias(inputFile);
-                    SearchResult searchResult = customerDataRequester.getSearchResult(searchCriterias.getCriterias());
-                    outputWriter.saveSearchResult(outputFile, searchResult);
-                } else if (type.equals("stat")) {
-                    StatCriteria statCriteria = inputReader.readStatCriteria(inputFile);
-                    Statistics statistics = customerDataRequester.getStatistics(statCriteria);
-                    outputWriter.saveStatistics(outputFile, statistics);
-                } else {
+                if (!(type.equals("search") || type.equals("stat"))) {
                     outputWriter.errorOutput(outputFile, new Error("Некорректный аргумент"));
+                } else {
+                    InputCriterias inputCriterias = inputReader.readCriterias(type, inputFile);
+                    Result result = customerDataRequester.getResult(inputCriterias);
+                    outputWriter.saveResult(outputFile, result);
                 }
-
             } catch (SQLException e) {
                 outputWriter.errorOutput(outputFile, new Error("Ошибка при работе с базой данных"));
             } catch (IOException e) {

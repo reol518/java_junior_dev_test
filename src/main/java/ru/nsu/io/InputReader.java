@@ -1,12 +1,9 @@
 package ru.nsu.io;
 
-import ru.nsu.criterias.SearchCriterias;
-import ru.nsu.criterias.StatCriteria;
+import ru.nsu.criterias.InputCriterias;
 
 import java.io.IOException;
 
 public interface InputReader {
-    SearchCriterias readSearchCriterias(String input) throws IOException;
-
-    StatCriteria readStatCriteria(String input) throws IOException;
+    InputCriterias readCriterias(String type, String input) throws IOException;
 }

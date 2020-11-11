@@ -1,4 +1,4 @@
-package ru.nsu.statistics;
+package ru.nsu.result.statistics;
 
 import java.util.List;
 

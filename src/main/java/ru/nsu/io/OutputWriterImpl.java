@@ -2,8 +2,7 @@ package ru.nsu.io;
 
 import com.google.gson.Gson;
 import ru.nsu.error.Error;
-import ru.nsu.search.SearchResult;
-import ru.nsu.statistics.Statistics;
+import ru.nsu.result.Result;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -19,17 +18,10 @@ public class OutputWriterImpl implements OutputWriter {
     }
 
     @Override
-    public void saveSearchResult(String outputFile, SearchResult searchResult) throws IOException {
-        String json = gson.toJson(searchResult);
-        writeInFile(outputFile, json);
+    public void saveResult(String outputFile, Result result) throws IOException {
+        String json = gson.toJson(result);
         System.out.println(json);
-    }
-
-    @Override
-    public void saveStatistics(String outputFile, Statistics statistics) throws IOException {
-        String json = gson.toJson(statistics);
         writeInFile(outputFile, json);
-        System.out.println(json);
     }
 
     @Override
@@ -48,5 +40,4 @@ public class OutputWriterImpl implements OutputWriter {
             writer.write(json);
         }
     }
-
 }

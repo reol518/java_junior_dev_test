@@ -1,4 +1,4 @@
-package ru.nsu.statistics;
+package ru.nsu.result.statistics;
 
 public class Purchase {
     public Purchase(String productName, int expenses) {

@@ -1,8 +1,10 @@
-package ru.nsu.search;
+package ru.nsu.result.search;
+
+import ru.nsu.result.Result;
 
 import java.util.List;
 
-public class SearchResult {
+public class SearchResult implements Result {
     private final String type = "search";
     private List<ResultsByCriteria> results;
 

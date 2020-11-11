@@ -2,12 +2,13 @@ package ru.nsu;
 
 import ru.nsu.criterias.*;
 import ru.nsu.database.DataBaseConnection;
-import ru.nsu.search.Customer;
-import ru.nsu.search.ResultsByCriteria;
-import ru.nsu.search.SearchResult;
-import ru.nsu.statistics.CustomerStat;
-import ru.nsu.statistics.Purchase;
-import ru.nsu.statistics.Statistics;
+import ru.nsu.result.Result;
+import ru.nsu.result.search.Customer;
+import ru.nsu.result.search.ResultsByCriteria;
+import ru.nsu.result.search.SearchResult;
+import ru.nsu.result.statistics.CustomerStat;
+import ru.nsu.result.statistics.Purchase;
+import ru.nsu.result.statistics.Statistics;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -23,57 +24,49 @@ public class CustomerDataRequesterImpl implements CustomerDataRequester {
 
     private final Connection connection;
 
+    private List<CustomerStat> customers;
+    private int totalSum = 0;
+
     @Override
-    public Statistics getStatistics(StatCriteria statCriteria) throws SQLException {
+    public Result getResult(InputCriterias inputCriterias) throws SQLException {
+        Result result = null;
+        if (inputCriterias instanceof StatCriteria) {
+            result = getStatistics((StatCriteria) inputCriterias);
+        } else if (inputCriterias instanceof SearchCriterias) {
+            result = getSearchResult(((SearchCriterias) inputCriterias).getCriterias());
+        }
+        return result;
+    }
+
+    private Statistics getStatistics(StatCriteria statCriteria) throws SQLException {
         String querySQL = getSQLQueryForStatCriteria(statCriteria);
         Statement statement = connection.createStatement();
         Statistics statistics = new Statistics();
 
         ResultSet resultSet = statement.executeQuery(querySQL);
 
-        List<CustomerStat> customers = new ArrayList<>();
-
+        customers = new ArrayList<>();
         int index = 1;
-        int totalSum = 0;
         while (resultSet.next()) {
             if (resultSet.isFirst())
                 statistics.setTotalDays(resultSet.getInt("numOfDays"));
 
             String name = resultSet.getString("last_name") + " " +
                     resultSet.getString("first_name");
-            int totalExpenses = resultSet.getInt("total_sum");
-            CustomerStat customerStat;
-            List<Purchase> purchases;
+            int customerTotalExpenses = resultSet.getInt("total_sum");
 
             if (customers.isEmpty()) {
-                purchases = new ArrayList<Purchase>();
-                customerStat = new CustomerStat(name, purchases, totalExpenses);
-                customers.add(customerStat);
-                totalSum += totalExpenses;
+                newCustomer(name, customerTotalExpenses);
             }
-            if (customers.get(index - 1).getName().equals(name)
-                    && customers.get(index - 1).getTotalExpenses() == totalExpenses
-            ) {
-                customers.get(index - 1).addToPurchasesList(newPurchase(resultSet));
 
-            } else if (!customers.get(index - 1).getName().equals(name)
-                    && customers.get(index - 1).getTotalExpenses() != totalExpenses
-            ) {
-
-                totalSum += totalExpenses;
+            if (isAnotherCustomer(name, index, customerTotalExpenses)) {
+                newCustomer(name, customerTotalExpenses);
                 index++;
-                purchases = new ArrayList<>();
-                customerStat = new CustomerStat(name, purchases, totalExpenses);
-                customers.add(customerStat);
-
-                customers.get(index - 1).addToPurchasesList(newPurchase(resultSet));
-
             }
+            customers.get(index - 1).addToPurchasesList(newPurchase(resultSet));
         }
-        statistics.setCustomers(customers);
-        statistics.setTotalExpenses(totalSum);
-        double avgExpenses = (double) totalSum / customers.size();
-        statistics.setAvgExpenses(avgExpenses);
+        statistics.setParameters(customers, totalSum);
+
         return statistics;
     }
 
@@ -92,21 +85,32 @@ public class CustomerDataRequesterImpl implements CustomerDataRequester {
                 "order by total_sum desc, customers.last_name, customers.first_name, product_count";
     }
 
+    private void newCustomer(String name, int customerTotalExpenses) {
+        totalSum += customerTotalExpenses;
+        List<Purchase> purchases = new ArrayList<>();
+        CustomerStat customerStat = new CustomerStat(name, purchases, customerTotalExpenses);
+        customers.add(customerStat);
+    }
+
+    private boolean isAnotherCustomer(String name, int index, int customerTotalExpenses) {
+        return !(customers.get(index - 1).getName().equals(name)
+                && customers.get(index - 1).getTotalExpenses() == customerTotalExpenses);
+    }
+
     private Purchase newPurchase(ResultSet resultSet) throws SQLException {
         String purchaseName = resultSet.getString("product");
         int expenses = resultSet.getInt("product_sum");
         return new Purchase(purchaseName, expenses);
     }
 
-    @Override
-    public SearchResult getSearchResult(List<Criteria> criteriaList) throws SQLException {
+
+    private SearchResult getSearchResult(List<Criteria> criteriaList) throws SQLException {
         String querySQL = null;
         Statement statement = connection.createStatement();
         SearchResult searchResult = new SearchResult();
         List<ResultsByCriteria> resultsForSearchesList = new ArrayList<>();
 
         for (Criteria criteria : criteriaList) {
-
             if (criteria instanceof LastNameCriteria) {
                 querySQL = getSQLQueryForLastNameCriteria((LastNameCriteria) criteria);
             } else if (criteria instanceof ProductMinTimesBuyingCriteria) {
@@ -116,6 +120,7 @@ public class CustomerDataRequesterImpl implements CustomerDataRequester {
             } else if (criteria instanceof BadCustomersCriteria) {
                 querySQL = getSQLBadCustomersCriteria((BadCustomersCriteria) criteria);
             }
+
             ResultSet resultSet = statement.executeQuery(querySQL);
             List<Customer> customersList = new ArrayList<>();
             while (resultSet.next()) {

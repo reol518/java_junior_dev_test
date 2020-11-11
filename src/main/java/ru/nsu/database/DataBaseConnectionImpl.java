@@ -22,6 +22,7 @@ public class DataBaseConnectionImpl implements DataBaseConnection {
         return connection;
     }
 
+    //throws sql
     private void connectToDataBase() {
         String url = "jdbc:postgresql://" + host + ":" + port + "/" + databaseName;
         try {

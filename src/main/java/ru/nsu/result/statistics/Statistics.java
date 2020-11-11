@@ -1,8 +1,10 @@
-package ru.nsu.statistics;
+package ru.nsu.result.statistics;
+
+import ru.nsu.result.Result;
 
 import java.util.List;
 
-public class Statistics {
+public class Statistics implements Result {
     private final String type = "stat";
     private int totalDays;
     private List<CustomerStat> customers;
@@ -43,5 +45,11 @@ public class Statistics {
 
     public void setAvgExpenses(double avgExpenses) {
         this.avgExpenses = avgExpenses;
+    }
+
+    public void setParameters(List<CustomerStat> customers, int totalSum) {
+        this.customers = customers;
+        this.totalExpenses = totalSum;
+        this.avgExpenses = (double) totalSum / customers.size();
     }
 }

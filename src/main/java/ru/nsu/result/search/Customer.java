@@ -1,4 +1,4 @@
-package ru.nsu.search;
+package ru.nsu.result.search;
 
 public class Customer {
     public Customer(String lastName, String firstName) {
